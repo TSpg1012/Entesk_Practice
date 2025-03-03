@@ -60,7 +60,7 @@ const loadNotes = function () {
     const dataJSON = dataBuffer.toString();
     return JSON.parse(dataJSON);
   } catch (e) {
-    return [];
+    return;
   }
 };
 

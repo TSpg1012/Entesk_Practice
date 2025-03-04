@@ -1,6 +1,10 @@
 const weatherForm = document.querySelector(".weatherForm");
 const weatherAddress = document.querySelector(".weatherAddress");
 
+const Longitude = document.querySelector(".longitude");
+const Latitude = document.querySelector(".latitude");
+const Forecast = document.querySelector(".forecast");
+
 weatherForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
@@ -36,8 +40,9 @@ weatherForm.addEventListener("submit", (e) => {
           const currentData = res.data.current;
           const forecast = `${currentData.weather_descriptions[0]}. It is currently ${currentData.temperature}°C out there. However, it feels like ${currentData.feelslike}°C.`;
 
-          console.log(longitude, latitude);
-          console.log(forecast);
+          longitude.textContent = longitude;
+          Latitude.textContent = longitude;
+          Forecast.textContent = forecast;
         })
         .catch((error) => {
           console.log("Weather API Error: " + error);

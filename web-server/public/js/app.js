@@ -37,11 +37,13 @@ weatherForm.addEventListener("submit", (e) => {
             return;
           }
 
+          console.log(latitude, longitude);
+          
           const currentData = res.data.current;
           const forecast = `${currentData.weather_descriptions[0]}. It is currently ${currentData.temperature}°C out there. However, it feels like ${currentData.feelslike}°C.`;
 
           longitude.textContent = longitude;
-          Latitude.textContent = longitude;
+          Latitude.textContent = latitude;
           Forecast.textContent = forecast;
         })
         .catch((error) => {

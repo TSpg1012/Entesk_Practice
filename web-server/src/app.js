@@ -3,14 +3,32 @@ const path = require("path");
 const geocode = require("./utills/utills");
 
 const app = express();
+
 const publicDirectoryPath = path.join(__dirname, "../public");
+const viewsPath = path.join(__dirname, "../public/views");
+
+app.set("view engine", "hbs");
+app.set("views", viewsPath);
 
 app.use(express.static(publicDirectoryPath));
 
-app.set("../public/index.html", (req, res) => {
-  console.log("rendered");
+app.get("/", (req, res) => {
   res.render("index", {
     title: "Home Page",
+    name: "Said",
+  });
+});
+
+app.get("/about", (req, res) => {
+  res.render("about", {
+    title: "About Page",
+    name: "Said",
+  });
+});
+
+app.get("/help", (req, res) => {
+  res.render("help", {
+    title: "Help Page",
     name: "Said",
   });
 });

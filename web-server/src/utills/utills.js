@@ -10,13 +10,16 @@ const geocode = (city, callback) => {
         return callback("City not found!", null);
       }
 
+      console.log(response.data);
       if (!response.data.results || response.data.results.length === 0) {
         return callback("City not found!", null);
       }
 
       // Destructure latitude and longitude safely
+
       const location = response.data.results[0];
       const { latitude, longitude } = location;
+      console.log(longitude, latitude);
 
       const urlWeather = `https://api.weatherstack.com/current?access_key=fcd69a396f2bfe67b04ab3829fd1cd38&query=${latitude},${longitude}&units=m`;
 

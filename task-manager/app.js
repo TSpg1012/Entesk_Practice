@@ -8,7 +8,7 @@ const port = 3000;
 require("dotenv").config();
 require("./config/db");
 
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cors());
 app.use("/", router);
 

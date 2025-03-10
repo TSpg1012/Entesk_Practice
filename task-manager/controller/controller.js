@@ -1,4 +1,5 @@
 const Users = require("../model/model");
+const bcrypt = require("bcrypt");
 
 const getUsersAll = async (req, res) => {
   let allProducts = await Users.find({});
@@ -11,6 +12,7 @@ const addUser = async (req, res) => {
       name: req.body.name,
       age: req.body.age,
       id: req.body.id,
+      password: req.body.password,
     });
 
     await newUser.save();
@@ -97,6 +99,34 @@ const updateUser = async (req, res) => {
   }
 };
 
+const loginUser = async (req, res) => {
+  try {
+    const { id, password } = req.params;
+    const user = await Users.findOne({ id });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid ID or password" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid ID or password" });
+    }
+
+    return res.status(200).json({
+      message: "Login successful",
+      user: {
+        id: user.id,
+        name: user.name,
+        age: user.age,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   getUsersAll,
   addUser,
@@ -104,4 +134,5 @@ module.exports = {
   findUser,
   deleteUser,
   updateUser,
+  loginUser,
 };

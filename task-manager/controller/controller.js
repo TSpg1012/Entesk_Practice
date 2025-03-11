@@ -1,5 +1,6 @@
 const Users = require("../model/model");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const getUsersAll = async (req, res) => {
   let allProducts = await Users.find({});
@@ -13,6 +14,7 @@ const addUser = async (req, res) => {
       age: req.body.age,
       id: req.body.id,
       password: req.body.password,
+      email: req.body.email,
     });
 
     await newUser.save();
@@ -99,26 +101,67 @@ const updateUser = async (req, res) => {
   }
 };
 
+const signUpUser = async (req, res) => {
+  try {
+    const existingUser = await Users.findOne({ id: req.body.email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(req.body.password, 8);
+
+    const newUser = new Users({
+      name: req.body.name,
+      age: req.body.age,
+      id: req.body.id,
+      password: hashedPassword,
+      email: req.body.email,
+    });
+
+    await newUser.save();
+
+    res
+      .status(201)
+      .json({ message: "New registered successfully", user: newUser });
+  } catch (error) {
+    console.error("Error signing up user:", error);
+    res
+      .status(500)
+      .json({ message: "Error signing up user", error: error.message });
+  }
+};
+
 const loginUser = async (req, res) => {
   try {
-    const { id, password } = req.params;
-    const user = await Users.findOne({ id });
+    const { email, password } = req.body;
+    const user = await Users.findOne({ email });
 
     if (!user) {
-      return res.status(400).json({ message: "Invalid ID or password" });
+      return res.status(400).json({ message: "Invalid Email or password" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid ID or password" });
+      return res.status(400).json({ message: "Invalid Email or password" });
     }
+
+    const token = jwt.sign(
+      {
+        email: user.email,
+        password: user.password,
+      },
+      "secretKey",
+      { expiresIn: "15s" }
+    );
 
     return res.status(200).json({
       message: "Login successful",
+      token,
       user: {
         id: user.id,
         name: user.name,
         age: user.age,
+        email: user.email,
       },
     });
   } catch (error) {
@@ -135,4 +178,5 @@ module.exports = {
   deleteUser,
   updateUser,
   loginUser,
+  signUpUser,
 };

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const validator = require("validator");
 
 const userSchema = mongoose.Schema(
   {
@@ -22,6 +23,15 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: [8, "Password must be at least 8 characters long"],
+    },
+    email: {
+      type: String,
+      required: [true, "Gmail is required"],
+      unique: true,
+      validate: {
+        validator: validator.isEmail,
+        message: "Invalid Email",
+      },
     },
   },
   {

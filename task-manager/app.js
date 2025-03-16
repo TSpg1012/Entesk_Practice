@@ -9,6 +9,10 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 require("./config/db");
 
+// app.use((req, res, next) => {
+//   res.status(503).send("Backend is currently down");
+// }); disabled all requests
+
 app.use(express.json());
 app.use(cors());
 app.use("/", router);

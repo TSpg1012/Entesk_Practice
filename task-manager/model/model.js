@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
 
 const userSchema = mongoose.Schema(
   {
@@ -33,9 +34,18 @@ const userSchema = mongoose.Schema(
         message: "Invalid Email",
       },
     },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   {
     collection: "users",
+    timestamps: true,
   }
 );
 
@@ -58,8 +68,17 @@ userSchema.pre("findOneAndUpdate", async function (next) {
   next();
 });
 
-const Users = mongoose.model("users", userSchema);
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = jwt.sign({ _id: user._id.toString() }, "my_secret_key");
 
+  user.tokens = user.tokens.concat({ token });
+  await user.save();
+
+  return token;
+};
+
+const Users = mongoose.model("users", userSchema);
 // const hashPassword = async () => {
 //   const password = "seid2004";
 //   const hashedPassword = await bcrypt.hash(password, 8);

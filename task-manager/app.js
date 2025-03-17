@@ -5,6 +5,7 @@ const cors = require("cors");
 const router = require("./router/router");
 const port = 3000;
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
 
 require("dotenv").config();
 require("./config/db");
@@ -12,6 +13,14 @@ require("./config/db");
 // app.use((req, res, next) => {
 //   res.status(503).send("Backend is currently down");
 // }); disabled all requests
+
+const upload = multer({
+  dest: "images",
+});
+
+app.post("/upload", upload.single('upload'), (req, res)=>{
+  req.send()
+})
 
 app.use(express.json());
 app.use(cors());
